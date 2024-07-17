@@ -44,11 +44,7 @@ const userSignUp = async (req: Request, res: Response) => {
     }
 
     const hashedPassword = await hashValue(password);
-    await pool.query(queries.USER_SIGN_UP, [
-      username,
-      email,
-      hashedPassword,
-    ]);
+    await pool.query(queries.USER_SIGN_UP, [username, email, hashedPassword]);
 
     res.status(200).json({
       success: true,
@@ -73,7 +69,7 @@ const userSignIn = async (req: Request, res: Response) => {
     const user: IUser = result.rows[0];
 
     if (!user) {
-      return res.status(401).json({
+      return res.status(404).json({
         success: false,
         error: "Unauthorized",
         errorMessage: "User does not exist",
@@ -92,10 +88,9 @@ const userSignIn = async (req: Request, res: Response) => {
     }
 
     const accessTokenPayload: IJwtPayload = {
-      id: user.id,
+      userid: user.userid,
       email: user.email,
       username: user.username,
-      role: user.role,
     };
 
     const accessToken = generateAccessToken(accessTokenPayload);
@@ -339,6 +334,32 @@ const resendVerificationCode = async (req: Request, res: Response) => {
   }
 };
 
+const getUsers = async (req: Request, res: Response) => {
+  try {
+    const user = res.locals.user;
+  
+
+    const result = await pool.query(queries.GET_USERS, [user.userid]);
+
+    if (result.rows.length === 0) {
+      return res.json([]);
+    }
+
+    res.status(200).json({
+      success: true,
+      users: result.rows,
+    });
+  } catch (error: any) {
+    console.error("Internal Server Error: ", error.message);
+
+    res.status(500).json({
+      success: false,
+      error: "Internal Server Error",
+      errorMessage: "Something went wrong. Please try again later.",
+    });
+  }
+};
+
 export {
   emailVerification,
   forgotPassword,
@@ -346,4 +367,5 @@ export {
   resetPassword,
   userSignIn,
   userSignUp,
+  getUsers,
 };

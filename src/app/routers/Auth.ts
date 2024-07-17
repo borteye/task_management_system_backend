@@ -1,6 +1,6 @@
 import express, { Router } from "express";
 import * as controller from "../controllers/Auth";
-import { authenticatePasswordResetToken } from "../../middlewares/JWTAuthenticator";
+import { authenticateAccessToken, authenticatePasswordResetToken } from "../../middlewares/JWTAuthenticator";
 
 const router: Router = express.Router();
 
@@ -22,5 +22,7 @@ router.post(
   authenticatePasswordResetToken,
   controller.resetPassword
 );
+
+router.get("/get-users",authenticateAccessToken, controller.getUsers);
 
 export default router;

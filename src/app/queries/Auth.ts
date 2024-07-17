@@ -13,7 +13,7 @@ const UPDATE_PASSWORD = "UPDATE users SET password = $1 WHERE email = $2";
 const DELETE_VERIFICATION_CODE =
   "DELETE FROM verification_code WHERE user_email = $1";
 
-const GET_USERS = "SELECT * FROM users";
+const GET_USERS = "SELECT  username FROM users WHERE userid <> $1";
 
 export {
   ADD_VERIFICATION_CODE,

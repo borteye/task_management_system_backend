@@ -1,8 +1,7 @@
 interface IJwtPayload {
-  id?: number;
+  userid?: number;
   email?: string;
   username?: string;
-  role?: string;
 }
 
 interface IMailOptions {
